@@ -55,7 +55,11 @@ window.onload = function () {
                 do {
                     applee.setNewPosition();
                 }
-                while (applee.isOnSnake(snaker))
+                while (applee.isOnSnake(snaker));
+                // acceleration du serpent après avoir manger 8 pommes
+                if (score % 8 == 0) {
+                    speedUp();
+                }
 
             }
             // on refraichi la position du rectangle
@@ -71,6 +75,10 @@ window.onload = function () {
                  * de rappeler la fonction refreshCanvas après le delay de 100ms */
             timeout = setTimeout(refreshCanvas, delay);
         }
+    }
+    //création de la fonction d'accelération speedUp
+    function speedUp() {
+        delay / 1.5;
     }
     function gameOver() {
         ctx.save();
@@ -232,7 +240,7 @@ window.onload = function () {
             var y = this.position[1] * blockSize + radius;
             // On dessine le rond avec la fonction arc, 
             ctx.arc(x, y, radius, 0, Math.PI * 2, true);
-            // On restore les anciens apramètres de canvas
+            // On restore les anciens paramètres de canvas
             ctx.fill();
             ctx.restore();
         };
@@ -248,6 +256,7 @@ window.onload = function () {
             var isOnSnake = false;
             for (var i = 0; i < snakeToCheck.body.lenght; i++) {
                 if (this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]) {
+                    isOnSnake = true;
                 }
             }
             return isOnSnake;
