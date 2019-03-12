@@ -1,24 +1,28 @@
 window.onload = function () {
-    //Déclaration des variables globals
+    //Déclaration des constiables globals
 
-    var canvasWidth = 900;
-    var canvasHeight = 600;
-    var blockSize = 30;
-    var ctx;
-    var delay = 100;
-    var snaker;
-    var applee;
-    //création de variable pour stocker la largeur et hauteur du canvas en nombre de blocks plutôt qu'en pixels
-    var widthInBlocks = canvasWidth / blockSize;
-    var heightInBlocks = canvasHeight / blockSize;
-    var score;
-    var timeout;
+    const canvasWidth = 900;
+    const canvasHeight = 600;
+    const blockSize = 30;
+    //création d une constante pour stocker la largeur et hauteur du canvas en nombre de blocks plutôt qu'en pixels
+    const widthInBlocks = canvasWidth / blockSize;
+    const heightInBlocks = canvasHeight / blockSize;
+    const centreX = canvasWidth / 2;
+    const centreY = canvasHeight / 2;
+    // On crée une constante qui va contenir  un élément, ici canvas
+    const canvas = document.createElement('canvas');
+    // on utilise le context pour pouvoir dessiner dans le canvas
+    const ctx = canvas.getContext('2d');
+    let delay = 100;
+    let snaker;
+    let applee;
+    let score;
+    let timeout;
     //execution de la fonction init
     init();
 
     function init() {
-        // On crée une variable qui va contenir  un élément, ici canvas
-        var canvas = document.createElement('canvas');
+
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         canvas.style.border = "10px solid red";
@@ -27,8 +31,7 @@ window.onload = function () {
         canvas.style.backgroundColor = "#ddd";
         //appendChild permet d accrocher un tag au body: ici canvas
         document.body.appendChild(canvas);
-        // on utilise le context pour pouvoir dessiner dans le canvas
-        ctx = canvas.getContext('2d');
+
         // On instancie l'objet snaker avec les arguments de position en commençant par la tête [6,4]
         snaker = new Snake([[6, 4], [5, 4], [4, 4], [3, 4], [2, 4]], "right");
         applee = new Apple([10, 10]);
@@ -71,7 +74,7 @@ window.onload = function () {
             snaker.draw();
             applee.draw();
 
-            /* On stocke dans la variable timeout, la fonction setTimeout qui permet
+            /* On stocke dans la constiable timeout, la fonction setTimeout qui permet
                  * de rappeler la fonction refreshCanvas après le delay de 100ms */
             timeout = setTimeout(refreshCanvas, delay);
         }
@@ -89,8 +92,6 @@ window.onload = function () {
         // on utilise strokeStyle pour créer un contour blanc au texte
         ctx.strokeStyle = "white";
         ctx.lineWidth = 5;
-        var centreX = canvasWidth / 2;
-        var centreY = canvasHeight / 2;
         ctx.strokeText("Game Over", centreX, centreY - 180);
         ctx.fillText("Game Over", centreX, centreY - 180);
         ctx.font = "bold 30px sans-serif";
@@ -103,7 +104,7 @@ window.onload = function () {
         snaker = new Snake([[6, 4], [5, 4], [4, 4], [3, 4], [2, 4]], "right");
         applee = new Apple([10, 10]);
         score = 0;
-        //la fonction clearTimeout a laquelle on donne la variable timeout qui permet de tuer setTimeout si 
+        //la fonction clearTimeout a laquelle on donne la constiable timeout qui permet de tuer setTimeout si 
         // l on relance le jeu sans avoir causer de game over ce qui évite l accélération du serpent.
         clearTimeout(timeout);
         refreshCanvas();
@@ -112,13 +113,12 @@ window.onload = function () {
         ctx.save();
         ctx.font = "bold 50px sans-serif";
         ctx.fillStyle = "black";
-
         ctx.fillText(score.toString(), 5, canvasHeight - 5);
         ctx.restore();
     }
     function drawBlock(ctx, position) {
-        var x = position[0] * blockSize;
-        var y = position[1] * blockSize;
+        const x = position[0] * blockSize;
+        const y = position[1] * blockSize;
         ctx.fillRect(x, y, blockSize, blockSize);
     }
     //on créer une fonction construct snake
@@ -135,7 +135,7 @@ window.onload = function () {
             /* On crée une boucle for pour dessiner le serpent.
              Tant que i < au nombre de blocks caractérisant le corps du serpent, on ajoute un block
              */
-            for (var i = 0; i < this.body.length; i++) {
+            for (let i = 0; i < this.body.length; i++) {
                 drawBlock(ctx, this.body[i]);
             }
             ctx.restore();
@@ -143,7 +143,7 @@ window.onload = function () {
         this.advance = function () {
             //slice() extrait une section d'une chaine de caractères et la 
             //retourne comme une nouvelle chaine de caractères.La chaîne de caractères courante n'est pas modifiée.
-            var nextPosition = this.body[0].slice();
+            const nextPosition = this.body[0].slice();
             switch (this.direction) {
                 case "left":
                     nextPosition[0] -= 1;
@@ -170,8 +170,8 @@ window.onload = function () {
             }
         };
         this.setDirection = function (newDirection) {
-            //on déclare une variable direction permise
-            var allowedDirections;
+            //on déclare un let direction permise
+            let allowedDirections;
             switch (this.direction) {
                 case "left":
                 case "right":
@@ -184,31 +184,31 @@ window.onload = function () {
                 default:
                     throw ('Invalid direction');
             }
-            // Si l'index de la nouvelle direction dans la variable allowedDirection est > -1, alors elle est permise
+            // Si l'index de la nouvelle direction dans la constiable allowedDirection est > -1, alors elle est permise
             if (allowedDirections.indexOf(newDirection) > -1) {
                 this.direction = newDirection;
             }
         };
         this.checkCollision = function () {
-            var wallCollision = false;
-            var snakeCollision = false;
-            var head = this.body[0];
-            var rest = this.body.slice(1);
-            var snakeX = head[0];
-            var snakeY = head[1];
-            var minX = 0;
-            var minY = 0;
-            var maxX = widthInBlocks - 1;
-            var maxY = heightInBlocks - 1;
+            let wallCollision = false;
+            let snakeCollision = false;
+            const head = this.body[0];
+            const rest = this.body.slice(1);
+            const snakeX = head[0];
+            const snakeY = head[1];
+            const minX = 0;
+            const minY = 0;
+            const maxX = widthInBlocks - 1;
+            const maxY = heightInBlocks - 1;
             // n'est pas entre les murs horisontaux et verticaux
-            var isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
-            var isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
+            const isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
+            const isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
             if (isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls) {
                 // il y a une collision
                 wallCollision = true;
             }
             // On vérifie que le serpent ne s'est pas passé sur le reste du corps 
-            for (var i = 0; i < rest.length; i++) {
+            for (let i = 0; i < rest.length; i++) {
                 if (snakeX === rest[i][0] && snakeY === rest[i][1]) {
                     snakeCollision = true;
                 }
@@ -217,7 +217,7 @@ window.onload = function () {
         };
         // On crée une methode  le serpent mange t-il une pomme?
         this.isEatingApple = function (appleToEat) {
-            var head = this.body[0];
+            const head = this.body[0];
             if (head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1]) {
                 return true;
             }
@@ -231,13 +231,14 @@ window.onload = function () {
         this.position = position;
         //création de la méthode pour dessiner une pomme
         this.draw = function () {
+            const radius = blockSize / 2;
+            const x = this.position[0] * blockSize + radius;
+            const y = this.position[1] * blockSize + radius;
             //on enregistre les anciens paramètre du canvas
             ctx.save();
             ctx.fillStyle = "#33cc33";
             ctx.beginPath();
-            var radius = blockSize / 2;
-            var x = this.position[0] * blockSize + radius;
-            var y = this.position[1] * blockSize + radius;
+
             // On dessine le rond avec la fonction arc, 
             ctx.arc(x, y, radius, 0, Math.PI * 2, true);
             // On restore les anciens paramètres de canvas
@@ -246,15 +247,15 @@ window.onload = function () {
         };
         // on crée une méthode pour donner une nouvelle position à la pomme, de façon aléatoire et avec un nombre entier
         this.setNewPosition = function () {
-            var newX = Math.round(Math.random() * (widthInBlocks - 1));
-            var newY = Math.round(Math.random() * (heightInBlocks - 1));
+            const newX = Math.round(Math.random() * (widthInBlocks - 1));
+            const newY = Math.round(Math.random() * (heightInBlocks - 1));
             this.position = [newX, newY];
         };
         // on crée une méthode pour voir si la nouvelle position de la pomme est sur le serpent
         this.isOnSnake = function (snakeToCheck) {
-            // On initialise la variable isOnSnake à false (pas sur le serpent)
-            var isOnSnake = false;
-            for (var i = 0; i < snakeToCheck.body.lenght; i++) {
+            // On initialise un let isOnSnake à false (pas sur le serpent)
+            let isOnSnake = false;
+            for (let i = 0; i < snakeToCheck.body.lenght; i++) {
                 if (this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]) {
                     isOnSnake = true;
                 }
@@ -265,8 +266,9 @@ window.onload = function () {
     }
     // On crée l'évènement onkeydown. La fonction handleKeyDown sera éxécutée quand la touche sera appuyée
     document.onkeydown = function handleKeyDown(e) { // e est un évènement
-        var key = e.keyCode;
-        var newDirection;
+        //on stock le code de la touche sur laquelle le joueur appuis
+        const key = e.keyCode;
+        let newDirection;
         switch (key) {
             case 37:
                 newDirection = "left";
