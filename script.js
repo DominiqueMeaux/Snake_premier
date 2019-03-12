@@ -13,7 +13,7 @@ window.onload = function () {
     const canvas = document.createElement('canvas');
     // on utilise le context pour pouvoir dessiner dans le canvas
     const ctx = canvas.getContext('2d');
-    let delay = 100;
+    let delay;
     let snaker;
     let applee;
     let score;
@@ -31,11 +31,16 @@ window.onload = function () {
         canvas.style.backgroundColor = "#ddd";
         //appendChild permet d accrocher un tag au body: ici canvas
         document.body.appendChild(canvas);
-
+        launch();
+    }
+    function launch() {
         // On instancie l'objet snaker avec les arguments de position en commençant par la tête [6,4]
         snaker = new Snake([[6, 4], [5, 4], [4, 4], [3, 4], [2, 4]], "right");
         applee = new Apple([10, 10]);
         score = 0;
+        //la fonction clearTimeout a laquelle on donne la constiable timeout qui permet de tuer setTimeout si 
+        // l on relance le jeu sans avoir causer de game over ce qui évite l accélération du serpent.
+        clearTimeout(timeout);
         refreshCanvas();
     }
     //fonction de rafraichissement
@@ -100,15 +105,7 @@ window.onload = function () {
         ctx.fillText("Appuyer sur la touche espace pour rejouer", centreX, centreY - 120);
         ctx.restore();
     }
-    function restart() {
-        snaker = new Snake([[6, 4], [5, 4], [4, 4], [3, 4], [2, 4]], "right");
-        applee = new Apple([10, 10]);
-        score = 0;
-        //la fonction clearTimeout a laquelle on donne la constiable timeout qui permet de tuer setTimeout si 
-        // l on relance le jeu sans avoir causer de game over ce qui évite l accélération du serpent.
-        clearTimeout(timeout);
-        refreshCanvas();
-    }
+
     function drawScore() {
         ctx.save();
         ctx.font = "bold 50px sans-serif";
@@ -283,7 +280,7 @@ window.onload = function () {
                 newDirection = "down";
                 break;
             case 32:
-                restart();
+                launch();
                 return;
             default:
                 return;
