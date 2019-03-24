@@ -1,5 +1,5 @@
-window.onload = function () {
-    //Déclaration des constiables globals
+window.onload = () => {
+    //Déclaration des variables
 
     const canvasWidth = 900;
     const canvasHeight = 600;
@@ -10,7 +10,7 @@ window.onload = function () {
     const centreX = canvasWidth / 2;
     const centreY = canvasHeight / 2;
     // On crée une constante qui va contenir  un élément, ici canvas
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');//document est une variable du scope global
     // on utilise le context pour pouvoir dessiner dans le canvas
     const ctx = canvas.getContext('2d');
     let delay;
@@ -19,9 +19,9 @@ window.onload = function () {
     let score;
     let timeout;
     //execution de la fonction init
-    init();
 
-    function init() {
+
+    const init = () => {
 
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
@@ -33,19 +33,20 @@ window.onload = function () {
         document.body.appendChild(canvas);
         launch();
     }
-    function launch() {
+    const launch = () => {
         // On instancie l'objet snaker avec les arguments de position en commençant par la tête [6,4]
         snaker = new Snake([[6, 4], [5, 4], [4, 4], [3, 4], [2, 4]], "right");
         applee = new Apple([10, 10]);
         score = 0;
-        //la fonction clearTimeout a laquelle on donne la constiable timeout qui permet de tuer setTimeout si 
+        //la fonction clearTimeout a laquelle on donne la variable timeout qui permet de tuer setTimeout si 
         // l on relance le jeu sans avoir causer de game over ce qui évite l accélération du serpent.
-        clearTimeout(timeout);
+        clearTimeout(timeout); //fonction rattachée au scope global
+        delay = 100;
         refreshCanvas();
     }
     //fonction de rafraichissement
 
-    function refreshCanvas() {
+    const refreshCanvas = () => {
         // on appelle la fonction advance
         snaker.advance();
         // si la tête du serpent entre en collision
@@ -85,10 +86,10 @@ window.onload = function () {
         }
     }
     //création de la fonction d'accelération speedUp
-    function speedUp() {
+    const speedUp = () => {
         delay / 1.5;
     }
-    function gameOver() {
+    const gameOver = () => {
         ctx.save();
         ctx.font = "bold 50px sans-serif";
         ctx.fillStyle = "black";
@@ -106,26 +107,29 @@ window.onload = function () {
         ctx.restore();
     }
 
-    function drawScore() {
+    const drawScore = () => {
         ctx.save();
         ctx.font = "bold 50px sans-serif";
         ctx.fillStyle = "black";
         ctx.fillText(score.toString(), 5, canvasHeight - 5);
         ctx.restore();
     }
-    function drawBlock(ctx, position) {
+    const drawBlock = (ctx, position) => {
         const x = position[0] * blockSize;
         const y = position[1] * blockSize;
         ctx.fillRect(x, y, blockSize, blockSize);
     }
     //on créer une fonction construct snake
-    function Snake(body, direction) {
-        //utilisation de this pour créer une instance de snake (paramètre)
-        this.body = body;
-        this.direction = direction;
-        this.ateApple = false;// false pour éviter que le serpent grandisse tout de suite (true par défaut)
+    class Snake {
+        constructor(body, direction) {
+            //utilisation de this pour créer une instance de snake (paramètre)
+            this.body = body;
+            this.direction = direction;
+            this.ateApple = false;// false pour éviter que le serpent grandisse tout de suite (true par défaut)
+        }
+
         // On crée la méthode draw pour dessiner le serpent
-        this.draw = function () {
+        draw() {
             // On sauvegarde le context avant de dessiner
             ctx.save();
             ctx.fillStyle = "#ff0000";
@@ -137,7 +141,7 @@ window.onload = function () {
             }
             ctx.restore();
         };
-        this.advance = function () {
+        advance() {
             //slice() extrait une section d'une chaine de caractères et la 
             //retourne comme une nouvelle chaine de caractères.La chaîne de caractères courante n'est pas modifiée.
             const nextPosition = this.body[0].slice();
@@ -166,7 +170,7 @@ window.onload = function () {
                 this.ateApple = false;
             }
         };
-        this.setDirection = function (newDirection) {
+        setDirection(newDirection) {
             //on déclare un let direction permise
             let allowedDirections;
             switch (this.direction) {
@@ -186,7 +190,7 @@ window.onload = function () {
                 this.direction = newDirection;
             }
         };
-        this.checkCollision = function () {
+        checkCollision() {
             let wallCollision = false;
             let snakeCollision = false;
             const head = this.body[0];
@@ -213,7 +217,7 @@ window.onload = function () {
             return wallCollision || snakeCollision;
         };
         // On crée une methode  le serpent mange t-il une pomme?
-        this.isEatingApple = function (appleToEat) {
+        isEatingApple(appleToEat) {
             const head = this.body[0];
             if (head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1]) {
                 return true;
@@ -223,11 +227,14 @@ window.onload = function () {
             }
         };
     }
+
     // on crée une fonction construct apple
-    function Apple(position) {
-        this.position = position;
+    class Apple {
+        constructor(position) {
+            this.position = position;
+        }
         //création de la méthode pour dessiner une pomme
-        this.draw = function () {
+        draw() {
             const radius = blockSize / 2;
             const x = this.position[0] * blockSize + radius;
             const y = this.position[1] * blockSize + radius;
@@ -243,13 +250,13 @@ window.onload = function () {
             ctx.restore();
         };
         // on crée une méthode pour donner une nouvelle position à la pomme, de façon aléatoire et avec un nombre entier
-        this.setNewPosition = function () {
+        setNewPosition() {
             const newX = Math.round(Math.random() * (widthInBlocks - 1));
             const newY = Math.round(Math.random() * (heightInBlocks - 1));
             this.position = [newX, newY];
         };
         // on crée une méthode pour voir si la nouvelle position de la pomme est sur le serpent
-        this.isOnSnake = function (snakeToCheck) {
+        isOnSnake(snakeToCheck) {
             // On initialise un let isOnSnake à false (pas sur le serpent)
             let isOnSnake = false;
             for (let i = 0; i < snakeToCheck.body.lenght; i++) {
@@ -261,8 +268,11 @@ window.onload = function () {
 
         };
     }
+
+
+
     // On crée l'évènement onkeydown. La fonction handleKeyDown sera éxécutée quand la touche sera appuyée
-    document.onkeydown = function handleKeyDown(e) { // e est un évènement
+    document.onkeydown = (e) => { // e est un évènement
         //on stock le code de la touche sur laquelle le joueur appuis
         const key = e.keyCode;
         let newDirection;
@@ -289,4 +299,5 @@ window.onload = function () {
 
 
     };
-};
+    init();
+}
